@@ -16,11 +16,17 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   int _selectedIndex = 0;
 
-  List _pages = [
-    HomePage(),
-    SearchPage(),
-    AccountPage(),
-  ];
+  List _pages;
+
+  @override
+  void initState() { // build 하기 전 생성자 다음에 호출됨
+    super.initState();
+    _pages = [
+      HomePage(widget.user),
+      SearchPage(),
+      AccountPage(widget.user),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
