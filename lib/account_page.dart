@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AccountPage extends StatefulWidget {
 
@@ -14,6 +15,20 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  int _postCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Firestore.instance.collection('post').where('email', isEqualTo: widget.user.email)
+    .getDocuments()
+    .then((snapShot) {
+      setState(() {
+        _postCount = snapShot.documents.length;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,15 +104,18 @@ class _AccountPageState extends State<AccountPage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),)
             ],
           ),
-          Text('0\n게시물',
+          Text(
+            '$_postCount\n게시물',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18.0),
           ),
-          Text('0\n팔로워',
+          Text(
+            '0\n팔로워',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18.0),
           ),
-          Text('0\n팔로잉',
+          Text(
+            '0\n팔로잉',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18.0),
           ),
