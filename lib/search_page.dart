@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/create_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchPage extends StatefulWidget {
   final FirebaseUser user;
@@ -29,20 +30,32 @@ class _SearchPageState extends State<SearchPage> {
   }
   
   Widget _buildBody() {
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 1.0, // 정사각형 형태
-          mainAxisSpacing: 1.0, // 사진 사이의 공백
-          crossAxisSpacing: 1.0),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return _buildListItem(context, index);
-        });
+    return StreamBuilder(
+      stream: Firestore.instance.collection('post').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        var items = snapshot.data?.documents ?? [];
+
+        return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.0, // 정사각형 형태
+                mainAxisSpacing: 1.0, // 사진 사이의 공백
+                crossAxisSpacing: 1.0),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return _buildListItem(context, items[index]);
+            });
+      },
+    );
   }
 
-  Widget _buildListItem(BuildContext context, int index) {
+  Widget _buildListItem(context, document) { // 타입 생략 가능
     return Image.network(
-        '', fit: BoxFit.cover);
+        document['photoUrl'],
+        fit: BoxFit.cover);
   }
 }
