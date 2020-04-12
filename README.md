@@ -1,4 +1,4 @@
-# instagram_clone
+# inflearn-instagram-clone
 
 인스타그램 클론 프로젝트
 
